@@ -8,18 +8,18 @@ let engine;
 
 let boxes = [];
 let ground;
-let MouseConstraint = Matter.MouseConstraint,
-  Mouse = Matter.Mouse;
+// let MouseConstraint = Matter.MouseConstraint,
+//   Mouse = Matter.Mouse;
 let sides = [2, 3, 4, 5, 6, 7, 8, 9];
 
 function setup() {
   createCanvas(800, 600);
   engine = Engine.create();
-  ground = new Rect(150, 610, 300, 60, "#C0AAA9", { isStatic: true });
-  ground2 = new Rect(650, 610, 300, 60, "#C0AAA9", { isStatic: true });
+  ground = new Rect(150, 610, 320, 60, "#C0AAA9", { isStatic: true });
+  ground2 = new Rect(650, 610, 320, 60, "#C0AAA9", { isStatic: true });
   wall_1 = new Rect(0, 150, 20, 900, "#C0AAA9", { isStatic: true });
   wall_2 = new Rect(800, 150, 20, 900, "#C0AAA9", { isStatic: true });
-  obj = new Polygon(width / 2, 400, 3, 100, "#C0AAA9", {
+  obj = new Polygon(width / 2, 370, 3, 100, "#C0AAA9", {
     isStatic: true,
     angle: Math.PI * -1.5,
   });
@@ -41,9 +41,19 @@ function mousePressed() {
   let size = random(10, 40);
   let randomColor = color(random(256), random(256), random(256));
   let newRect;
-  // if (mouseButton === LEFT) {
-  // } else
-  if (mouseButton === CENTER) {
+  if (mouseButton === LEFT) {
+    if (angle > 2) {
+      newRect = new Polygon(mouseX, mouseY, angle, size, "#C0AAA9", {
+        isStatic: true,
+        angle: Math.PI * random(-1, 1),
+      });
+    } else if (angle < 3) {
+      newRect = new Circle(mouseX, mouseY, size, "#C0AAA9", {
+        isStatic: true,
+        angle: Math.PI * random(-1, 1),
+      });
+    }
+  } else if (mouseButton === CENTER) {
     if (angle > 2) {
       newRect = new Polygon(mouseX, mouseY, angle, size, randomColor, {
         restitution: 1,
@@ -79,6 +89,19 @@ function mouseDragged() {
 }
 
 function draw() {
+  let angle2 = random(sides);
+  let size2 = random(10, 40);
+  let randomColor = color(random(256), random(256), random(256));
+  let widthlenth = random(20, width - 20);
+  if (frameCount % 30 == 0) {
+    newRect2 = new Polygon(widthlenth, 50, angle2, size2, randomColor, {
+      restitution: 1,
+    });
+
+    boxes.push(newRect2);
+    Composite.add(engine.world, newRect2.bodies);
+  }
+
   background("#F8F3FD");
 
   Engine.update(engine);

@@ -2,9 +2,9 @@ class Circle {
   constructor(x, y, d, c, opt) {
     this.d = d;
     this.c = c;
-    var opt = {
-      restitution: 1,
-    };
+    // var opt = {
+    //   restitution: 1,
+    // };
     this.bodies = Bodies.circle(x, y, this.d / 2, opt);
   }
 
