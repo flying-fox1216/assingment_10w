@@ -4,22 +4,25 @@ let Engine = Matter.Engine,
   Composites = Matter.Composites,
   Common = Matter.Common;
 
+let backgif;
+
 let engine;
 
 let boxes = [];
 let ground;
 // let MouseConstraint = Matter.MouseConstraint,
 //   Mouse = Matter.Mouse;
-let sides = [2, 3, 4, 5, 6, 7, 8, 9];
+let sides = [0, 2, 3, 4, 5, 6, 7, 8, 9];
 
 function setup() {
-  createCanvas(800, 600);
+  backgif = loadImage("./source/catgif.gif");
+  createCanvas(800, 700);
   engine = Engine.create();
-  ground = new Rect(150, 610, 320, 60, "#C0AAA9", { isStatic: true });
-  ground2 = new Rect(650, 610, 320, 60, "#C0AAA9", { isStatic: true });
-  wall_1 = new Rect(0, 150, 20, 900, "#C0AAA9", { isStatic: true });
-  wall_2 = new Rect(800, 150, 20, 900, "#C0AAA9", { isStatic: true });
-  obj = new Polygon(width / 2, 370, 3, 100, "#C0AAA9", {
+  ground = new Rect(150, 710, 320, 60, "#C0AAA9", { isStatic: true });
+  ground2 = new Rect(650, 710, 320, 60, "#C0AAA9", { isStatic: true });
+  wall_1 = new Rect(0, 250, 20, 900, "#C0AAA9", { isStatic: true });
+  wall_2 = new Rect(800, 250, 20, 900, "#C0AAA9", { isStatic: true });
+  obj = new Polygon(width / 2, 400, 3, 100, "#Ccbbbb", {
     isStatic: true,
     angle: Math.PI * -1.5,
   });
@@ -43,12 +46,12 @@ function mousePressed() {
   let newRect;
   if (mouseButton === LEFT) {
     if (angle > 2) {
-      newRect = new Polygon(mouseX, mouseY, angle, size, "#C0AAA9", {
+      newRect = new Polygon(mouseX, mouseY, angle, size, "#Ccbbbb", {
         isStatic: true,
         angle: Math.PI * random(-1, 1),
       });
     } else if (angle < 3) {
-      newRect = new Circle(mouseX, mouseY, size, "#C0AAA9", {
+      newRect = new Circle(mouseX, mouseY, size, "#Ccbbbb", {
         isStatic: true,
         angle: Math.PI * random(-1, 1),
       });
@@ -82,6 +85,12 @@ function mouseDragged() {
     } else if (angle < 3) {
       newRect = new Circle(mouseX, mouseY, size, randomColor);
     }
+    // else if (angle === 0) {
+    //   newRect = new Circle(gif, mouseX, mouseY, size, randomColor, {
+    //     isStatic: true,
+    //     angle: Math.PI * random(-1, 1),
+    //   });
+    // }
   }
   Composite.add(engine.world, newRect.bodies);
   // Composite.add(engine.world, newRect2.body);
@@ -102,7 +111,8 @@ function draw() {
     Composite.add(engine.world, newRect2.bodies);
   }
 
-  background("#F8F3FD");
+  // background("#F8F3FD");
+  background(backgif, 70);
 
   Engine.update(engine);
   noStroke();
