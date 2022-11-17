@@ -4,6 +4,8 @@ let Engine = Matter.Engine,
   Composites = Matter.Composites,
   Common = Matter.Common;
 
+let Events = Matter.Events;
+
 let backgif;
 
 let engine;
@@ -22,6 +24,7 @@ function setup() {
   ground2 = new Rect(650, 710, 320, 60, "#C0AAA9", { isStatic: true });
   wall_1 = new Rect(0, 250, 20, 900, "#C0AAA9", { isStatic: true });
   wall_2 = new Rect(800, 250, 20, 900, "#C0AAA9", { isStatic: true });
+  ground3 = new Rect(width / 2, 0, 920, 30, "#C0AAA9", { isStatic: true });
   obj = new Polygon(width / 2, 400, 3, 100, "#Ccbbbb", {
     isStatic: true,
     angle: Math.PI * -1.5,
@@ -31,12 +34,59 @@ function setup() {
   // obj_1 = new Rect(800, 150, 20, 900, "#C0AAA9", { isStatic: true });
   Composite.add(engine.world, ground.bodies);
   Composite.add(engine.world, ground2.bodies);
+  Composite.add(engine.world, ground3.bodies);
   Composite.add(engine.world, wall_1.bodies);
   Composite.add(engine.world, wall_2.bodies);
   Composite.add(engine.world, obj.bodies);
 
   // Matter.Runner.run(engine);
   // Render.run(Render);
+
+  var explosion = function (engine) {
+    var bodies1 = Composite.allBodies(engine.world);
+
+    for (var i = 0; i < bodies1.length; i++) {
+      var body = bodies1[i];
+
+      if (!body.isStatic && body.position.y >= 500) {
+        var forceMagnitude = 0.05 * body.mass;
+
+        Bodies.applyForce(body, body.position, {
+          x:
+            (forceMagnitude + Common.random() * forceMagnitude) *
+            Common.choose([1, -1]),
+          y: -forceMagnitude + Common.random() * -forceMagnitude,
+        });
+      }
+    }
+  };
+
+  var timeScaleTarget = 1,
+    counter = 0;
+
+  Events.on(engine, "afterUpdate", function (event) {
+    // tween the timescale for bullet time slow-mo
+    engine.timing.timeScale +=
+      (timeScaleTarget - engine.timing.timeScale) * 0.05;
+
+    counter += 1;
+
+    // every 1.5 sec
+    if (counter >= 60 * 3) {
+      // flip the timescale
+      if (timeScaleTarget < 1) {
+        timeScaleTarget = 1;
+      } else {
+        timeScaleTarget = 0.05;
+      }
+
+      // create some random forces
+      // explosion(engine);
+
+      // reset counter
+      counter = 0;
+    }
+  });
 }
 
 function mousePressed() {
@@ -60,9 +110,15 @@ function mousePressed() {
     if (angle > 2) {
       newRect = new Polygon(mouseX, mouseY, angle, size, randomColor, {
         restitution: 1,
+        frictionAir: 0,
+        friction: 0.0001,
       });
     } else if (angle < 3) {
-      newRect = new Circle(mouseX, mouseY, size, randomColor);
+      newRect = new Circle(mouseX, mouseY, size, randomColor, {
+        restitution: 1,
+        frictionAir: 0,
+        friction: 0.0001,
+      });
     }
   }
   Composite.add(engine.world, newRect.bodies);
@@ -124,6 +180,7 @@ function draw() {
 
   ground.render();
   ground2.render();
+  ground3.render();
   wall_1.render();
   wall_2.render();
   obj.render();
